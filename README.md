@@ -1,6 +1,6 @@
 # Proyecto 1 Jose Buxo (EDA)
 
-<!-- Disclaimer: El proyecto se hizo con un set de 2.4GB; al repo se subió un subset del dataset completo. -->
+Disclaimer: El proyecto se hizo con un set de 2.4GB; al repo se subió un subset del dataset completo(por si hay diferencias en los graficos).
 
 ## Carga y Exploración del Dataset
 
