@@ -1,9 +1,15 @@
 import polars as pl
 import pandas as pd
+import sys
+from pathlib import Path
+sys.path.append(str(Path().resolve().parent / 'lib'))
+
+from categorize_weather import categorize_weather
 
 def load_and_clean(path: str) -> pd.DataFrame:
     """
-    Load and clean a CSV using Polars and convert to Pandas.
+    Load and clean a CSV using Polars, then convert to Pandas.
+    Weather categorization is applied after conversion for performance.
     """
     # Load CSV in Polars
     df_polars = pl.read_csv(path)
@@ -36,9 +42,13 @@ def load_and_clean(path: str) -> pd.DataFrame:
     ]
     df_polars = df_polars.drop([c for c in drop_cols if c in df_polars.columns])
 
-    # Convert Polars DataFrame to Pandas manually (PyArrow-free)
-    data = {col: df_polars[col].to_list() for col in df_polars.columns}
-    df_pandas = pd.DataFrame(data)
+    # Convert Polars DataFrame to Pandas
+    df_pandas = pd.DataFrame({col: df_polars[col].to_list() for col in df_polars.columns})
+    # df_pandas = pd.DataFrame(data)
+
+    # Categorize weather and drop col
+    df_pandas['weather_simple'] = df_pandas['weather_condition'].apply(categorize_weather)
+    df_pandas = df_pandas.drop(columns=['weather_condition'])
 
     # Optimize memory usage
     for col in df_pandas.select_dtypes(include="object").columns:
